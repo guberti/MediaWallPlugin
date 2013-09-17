@@ -2,6 +2,8 @@ package com.juberti.MediaWallPlugin;
 
 import java.awt.Color;
 import java.awt.Graphics2D;
+import java.awt.Rectangle;
+import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -25,6 +27,7 @@ import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockRedstoneEvent;
 import org.bukkit.event.block.SignChangeEvent;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -61,6 +64,54 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
 		new Wool(15, 25, 22, 22)
 	};
 	
+	class Panel {
+	    Panel(int x, int y, int z, int w, int h, int d, int skinX, int skinY, int skinW, int skinH) {
+	        stevePos = new Vector(x, y, z);
+	        steveArea = new Vector(w, h, d);
+	        skinRect = new Rectangle(skinX, skinY, skinW, skinH);
+	    }
+		Panel(Vector inPos, Vector inArea, Rectangle inRect) {
+	    	stevePos = inPos;
+	    	steveArea = inArea;
+	    	skinRect = inRect;
+	    }
+	    public Vector getStevePos() { return stevePos; }
+	    public Vector getSteveArea() { return steveArea; }
+	    public Rectangle getSkinRect() { return skinRect; }
+	    Vector stevePos;
+	    Vector steveArea;
+	    Rectangle skinRect;
+	};
+	final Panel[] stevePanels = {
+		new Panel(0, 32, -2, 8, 1, 8, 8, 0, 8, 8),  // top of head 
+		new Panel(-4, 24, 0, 4, 1, 4, 44, 16, 4, 4), // left shoulder
+		new Panel(8, 24, 0, 4, 1, 4, 44, 16, 4, 4), // right shoulder [Note: Switching to bottom view] 
+		new Panel(0, 0, 0, 4, 1, 4, 8, 16, 4, 4), //left foot
+		new Panel(4, 0, 0, 4, 1, 4, 8, 16, 4, 4), //right foot
+		new Panel(-4, 12, 0, 4, 1, 4, 48, 16, 4, 4), //left hand
+		new Panel(8, 12, 0, 4, 1, 4, 48, 16, 4, 4), //right hand
+		new Panel(0, 24, 4, 8, 1, 2, 16, 0, 8, 2), //top half of the bottom
+		new Panel(0, 24, -2, 8, 1, 2, 16, 6, 8, 2), //top half of the bottom [Note:Switching to left view]
+		new Panel(0, 0, 4, 1, 12, 4, 8, 20, 4, 12), //left leg
+		new Panel(0, 12, 4, 1, 12, 4, 36, 20, 4, 12), //left arm
+		new Panel(0, 24, 6, 1, 8, 8, 16, 8, 8, 8), //left side of head [Note: Switching to right view]
+		new Panel(8, 0, 4, 1, 12, 4, 0, 20, 4, 12), //right leg
+		new Panel(8, 12, 4, 1, 12, 4, 28, 20, 4, 12), //right arm
+		new Panel(8, 24, 6, 1, 8, 8, 0, 8, 8, 8), //right side of head [Note: Switching to front view]
+		new Panel(0, 24, -2, 8, 8, 1, 8, 8, 8, 8), //face
+		new Panel(-4, 12, 0, 4, 12, 1, 44, 20, 4, 12), //left arm front
+		new Panel(8, 12, 0, 4, 12, 1, 44, 20, 4, 12), //right arm front
+		new Panel(0, 12, 0, 8, 12, 1, 20, 20, 8, 12), //chest
+		new Panel(0, 0, 0, 4, 12, 1, 4, 20, 4, 12), //left leg
+		new Panel(4, 0, 0, 4, 12, 1, 4, 20, 4, 12), //left leg [Note: Switching to back view]
+		new Panel(0, 24, -2, 8, 8, 1, 24, 8, 8, 8), //face
+		new Panel(-4, 12, 8, 4, 12, 1, 52, 20, 4, 12), //left arm front
+		new Panel(8, 12, 8, 4, 12, 1, 52, 20, 4, 12), //right arm front
+		new Panel(0, 12, 8, 8, 12, 1, 32, 20, 8, 12), //chest
+		new Panel(0, 0, 8, 4, 12, 1, 12, 20, 4, 12), //left leg
+		new Panel(4, 0, 8, 4, 12, 1, 12, 20, 4, 12), //left leg
+	};
+
 	@Override
 	public void onEnable(){
 		getLogger().info("onEnable has been invoked!");
@@ -234,15 +285,27 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
             loc.add(1, 0, 0);
 	    }
     }
-    void buildStatue(String playerName, Location Signlocation) {
-    	buildPrism(Signlocation.add(0, 0, 0), 8, 11, 4);
-    	buildPrism(Signlocation.add(-4, 11, 0), 16, 12, 4);
-    	buildPrism(Signlocation.add(4, 12, -2), 8, 8, 8);
+    void buildStatue(String playerName, Location signLocation) {
+    	buildPrism(signLocation, 8, 11, 4);
+    	Location torsoLocation = signLocation.clone();
+    	torsoLocation.add(-4, 11, 0);
+    	buildPrism(torsoLocation, 16, 12, 4);
+    	Location headLocation = torsoLocation.clone();
+    	headLocation.add(4, 12, -2);
+    	buildPrism(headLocation, 8, 8, 8);
+    	String surl = "http://s3.amazonaws.com/MinecraftSkins/" + playerName + ".png";
+    	try {
+		    URL url = new URL(surl);
+		    List<ImageFrame> skin = loadImage(url);
+		    paintStatue(skin.get(0).getImage(), signLocation);
+    	} catch (Exception e) {
+    		getLogger().info("Could not load skin for player " + playerName);
+		}
     }
     void buildPrism(Location loc, int length, int height, int width) {
-    	for(int x = 0; x < length; x++) {
-        	for(int y = 0; y < height; y++) {
-            	for(int z = 0; z < width; z++) {
+    	for (int x = 0; x < length; x++) {
+        	for (int y = 0; y < height; y++) {
+            	for (int z = 0; z < width; z++) {
     				Location here = loc.clone();
     				here.add(x, y, z);
     				here.getBlock().setType(Material.STONE);
@@ -250,6 +313,14 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
     		}
     	}
     		
+    }
+    void paintSign(Location startLocation, Integer l, Integer h, Integer w) {
+    	for(int x = 0; x<length; x++) {
+    		
+    	}
+    }
+    void paintStatue(BufferedImage skinImage, Location signLocation) {
+    	
     }
 	@EventHandler
 	public void onSignChange(SignChangeEvent event) {
