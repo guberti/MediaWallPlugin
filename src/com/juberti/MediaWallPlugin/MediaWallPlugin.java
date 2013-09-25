@@ -3,7 +3,6 @@ package com.juberti.MediaWallPlugin;
 import java.awt.Color;
 import java.awt.Graphics2D;
 import java.awt.Rectangle;
-import java.awt.geom.Point2D;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.io.InputStream;
@@ -83,33 +82,33 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
 	    Rectangle skinRect;
 	};
 	final Panel[] stevePanels = {
-		new Panel(0, 32, -2, 8, 1, 8, 8, 0, 8, 8),  // top of head 
-		new Panel(-4, 24, 0, 4, 1, 4, 44, 16, 4, 4), // left shoulder
-		new Panel(8, 24, 0, 4, 1, 4, 44, 16, 4, 4), // right shoulder [Note: Switching to bottom view] 
-		new Panel(0, 0, 0, 4, 1, 4, 8, 16, 4, 4), //left foot
-		new Panel(4, 0, 0, 4, 1, 4, 8, 16, 4, 4), //right foot
-		new Panel(-4, 12, 0, 4, 1, 4, 48, 16, 4, 4), //left hand
-		new Panel(8, 12, 0, 4, 1, 4, 48, 16, 4, 4), //right hand
-		new Panel(0, 24, 4, 8, 1, 2, 16, 0, 8, 2), //top half of the bottom
-		new Panel(0, 24, -2, 8, 1, 2, 16, 6, 8, 2), //top half of the bottom [Note:Switching to left view]
-		new Panel(0, 0, 4, 1, 12, 4, 8, 20, 4, 12), //left leg
-		new Panel(0, 12, 4, 1, 12, 4, 36, 20, 4, 12), //left arm
-		new Panel(0, 24, 6, 1, 8, 8, 16, 8, 8, 8), //left side of head [Note: Switching to right view]
-		new Panel(8, 0, 4, 1, 12, 4, 0, 20, 4, 12), //right leg
-		new Panel(8, 12, 4, 1, 12, 4, 28, 20, 4, 12), //right arm
-		new Panel(8, 24, 6, 1, 8, 8, 0, 8, 8, 8), //right side of head [Note: Switching to front view]
-		new Panel(0, 24, -2, 8, 8, 1, 8, 8, 8, 8), //face
-		new Panel(-4, 12, 0, 4, 12, 1, 44, 20, 4, 12), //left arm front
-		new Panel(8, 12, 0, 4, 12, 1, 44, 20, 4, 12), //right arm front
-		new Panel(0, 12, 0, 8, 12, 1, 20, 20, 8, 12), //chest
-		new Panel(0, 0, 0, 4, 12, 1, 4, 20, 4, 12), //left leg
-		new Panel(4, 0, 0, 4, 12, 1, 4, 20, 4, 12), //left leg [Note: Switching to back view]
-		new Panel(0, 24, -2, 8, 8, 1, 24, 8, 8, 8), //face
-		new Panel(-4, 12, 8, 4, 12, 1, 52, 20, 4, 12), //left arm front
-		new Panel(8, 12, 8, 4, 12, 1, 52, 20, 4, 12), //right arm front
-		new Panel(0, 12, 8, 8, 12, 1, 32, 20, 8, 12), //chest
-		new Panel(0, 0, 8, 4, 12, 1, 12, 20, 4, 12), //left leg
-		new Panel(4, 0, 8, 4, 12, 1, 12, 20, 4, 12), //left leg
+		new Panel( 0, 31, -2,  8,  1,  8,  8,  0,  8,  8), 	// top of head 
+		new Panel(-4, 23,  0,  4,  1,  4, 44, 16,  4,  4), 	// left shoulder
+		new Panel( 8, 23,  0,  4,  1,  4, 44, 16,  4,  4), 	// right shoulder [Note: Switching to bottom view] 
+		new Panel( 0,  0,  0,  4,  1,  4,  8, 16,  4,  4), 	// left foot
+		new Panel( 4,  0,  0,  4,  1,  4,  8, 16,  4,  4), 	// right foot
+		new Panel(-4, 12,  0,  4,  1,  4, 48, 16,  4,  4), 	// left hand
+		new Panel( 8, 12,  0,  4,  1,  4, 48, 16,  4,  4), 	// right hand
+		new Panel( 0, 24,  4,  8,  1,  2, 16,  0,  8,  2), 	// top half of the bottom
+		new Panel( 0, 24, -2,  8,  1,  2, 16,  6,  8,  2), 	// top half of the bottom [Note:Switching to left view]
+		new Panel( 0,  0,  0,  1, 12,  4,  8, 20,  4, 12), 	// left leg
+		new Panel(-4, 12,  0,  1, 12,  4, 36, 20,  4, 12), 	// left arm
+		new Panel( 0, 24, -2,  1,  8,  8, 16,  8,  8,  8), 	// left side of head [Note: Switching to right view]
+		new Panel( 8,  0,  0,  1, 12,  4,  0, 20,  4, 12), 	// right leg
+		new Panel(12, 12,  0,  1, 12,  4, 28, 20,  4, 12), 	// right arm
+		new Panel( 7, 24, -2,  1,  8,  8,  0,  8,  8,  8),	// right side of head [Note: Switching to front view]
+		new Panel( 0, 24,  6,  8,  8,  1,  8,  8,  8,  8), 	// face
+		new Panel(-4, 12,  3,  4, 12,  1, 44, 20,  4, 12), 	// left arm front
+		new Panel( 8, 12,  3,  4, 12,  1, 44, 20,  4, 12), 	// right arm front
+		new Panel( 0, 12,  3,  8, 12,  1, 20, 20,  8, 12), 	// front of chest
+		new Panel( 0,  0,  3,  4, 12,  1,  4, 20,  4, 12), 	// left leg
+		new Panel( 4,  0,  3,  4, 12,  1,  4, 20,  4, 12), 	// left leg [Note: Switching to back view]
+		new Panel( 0, 24, -2,  8,  8,  1, 24,  8,  8,  8), 	// back of head
+		new Panel(-4, 12,  0,  4, 12,  1, 52, 20,  4, 12), 	// left arm front
+		new Panel( 8, 12,  0,  4, 12,  1, 52, 20,  4, 12), 	// right arm front
+		new Panel( 0, 12,  0,  8, 12,  1, 32, 20,  8, 12), 	// back of chest
+		new Panel( 0,  0,  0,  4, 12,  1, 12, 20,  4, 12), 	// left leg
+		new Panel( 4,  0,  0,  4, 12,  1, 12, 20,  4, 12), 	// left leg
 	};
 
 	@Override
@@ -132,7 +131,7 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
 			}
 		}
 		if (text.contains("statue")) {
-			buildStatue("Gavin_U", location);
+			buildStatue(location, "Gavin_U");
 		}
 	}
 	void asyncBuildImage(final Location location, final URL url) {
@@ -285,10 +284,10 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
             loc.add(1, 0, 0);
 	    }
     }
-    void buildStatue(String playerName, Location signLocation) {
-    	buildPrism(signLocation, 8, 11, 4);
+    void buildStatue(Location signLocation, String playerName) {
+    	buildPrism(signLocation, 8, 12, 4);
     	Location torsoLocation = signLocation.clone();
-    	torsoLocation.add(-4, 11, 0);
+    	torsoLocation.add(-4, 12, 0);
     	buildPrism(torsoLocation, 16, 12, 4);
     	Location headLocation = torsoLocation.clone();
     	headLocation.add(4, 12, -2);
@@ -297,7 +296,7 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
     	try {
 		    URL url = new URL(surl);
 		    List<ImageFrame> skin = loadImage(url);
-		    paintStatue(skin.get(0).getImage(), signLocation);
+		    paintStatue(signLocation, skin.get(0).getImage());
     	} catch (Exception e) {
     		getLogger().info("Could not load skin for player " + playerName);
 		}
@@ -312,15 +311,24 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
     			}
     		}
     	}
-    		
     }
-    void paintSign(Location startLocation, Integer l, Integer h, Integer w) {
-    	for(int x = 0; x<length; x++) {
-    		
+    void paintStatue(Location startLocation, BufferedImage skinImage) {
+    	for (Panel panel: stevePanels) {
+    	    paintPanel(panel, startLocation, skinImage);
     	}
     }
-    void paintStatue(BufferedImage skinImage, Location signLocation) {
-    	
+    void paintPanel(Panel panel, Location startLocation, BufferedImage skinImage) {
+		getLogger().info("Painting panel: " + panel);
+    	for(int x = 0; x<panel.getSteveArea().getX(); x++) {
+         	for(int y = 0; y<panel.getSteveArea().getY(); y++) {
+         		for(int z = 0; z<panel.getSteveArea().getZ(); z++) {
+         			Location here = startLocation.clone();
+         			here.add(panel.getStevePos());
+         			here.add(x, y, z);
+         			here.getBlock().setType(Material.BOOKSHELF);
+         		}
+         	}
+         }
     }
 	@EventHandler
 	public void onSignChange(SignChangeEvent event) {
