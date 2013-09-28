@@ -120,7 +120,7 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
 	public void onDisable() {
 		getLogger().info("onDisable has been invoked!");		
 	}
-	void maybeBuildImage(final Location location, final String text) {
+	void maybeBuildImage(final Location location, final String text, final String name) {
 		if (text.contains("goo.gl")) {
 			try {
 				URL url;
@@ -131,7 +131,7 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
 			}
 		}
 		if (text.contains("statue")) {
-			buildStatue(location, "Gavin_U");
+			buildStatue(location, name);
 		}
 	}
 	void asyncBuildImage(final Location location, final URL url) {
@@ -307,7 +307,7 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
             	for (int z = 0; z < width; z++) {
     				Location here = loc.clone();
     				here.add(x, y, z);
-    				here.getBlock().setType(Material.STONE);
+    				here.getBlock().setType(Material.AIR);
     			}
     		}
     	}
@@ -318,7 +318,6 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
     	}
     }
     void paintPanel(Panel panel, Location startLocation, BufferedImage skinImage) {
-		getLogger().info("Painting panel: " + panel);
     	for(int x = 0; x<panel.getSteveArea().getX(); x++) {
          	for(int y = 0; y<panel.getSteveArea().getY(); y++) {
          		for(int z = 0; z<panel.getSteveArea().getZ(); z++) {
@@ -340,7 +339,6 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
          			    xx += x;
          			    yy -= y;
          			}
-         			getLogger().info("x is " + x + " y is " + y + " z is " + z + " xx is " + xx + "yy is " + yy);
          			byte woolType = getWoolType(skinImage, xx, yy);
          			here.getBlock().setType(Material.WOOL);
          			here.getBlock().setData(woolType);
@@ -351,7 +349,7 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
 
 	@EventHandler
 	public void onSignChange(SignChangeEvent event) {
-	    maybeBuildImage(event.getBlock().getLocation(), event.getLine(0));
+	    maybeBuildImage(event.getBlock().getLocation(), event.getLine(0), event.getLine(1));
 	}
 	@EventHandler
 	public void onBlockBreak(BlockBreakEvent event) {
@@ -369,7 +367,7 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
 	public void onBlockRedstone(BlockRedstoneEvent event) {
 		if (event.getBlock().getType() == Material.WALL_SIGN) {
             maybeBuildImage(event.getBlock().getLocation(), 
-            ((Sign)event.getBlock().getState()).getLine(0));
+            ((Sign)event.getBlock().getState()).getLine(0), ((Sign)event.getBlock().getState()).getLine(1));
 		}
 	}
 }
