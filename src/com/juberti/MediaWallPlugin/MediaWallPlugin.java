@@ -94,10 +94,10 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
 		new Panel( 0,  0,  0,  1, 12,  4,  8, 20,  4, 12), 	// left leg
 		new Panel(-4, 12,  0,  1, 12,  4, 36, 20,  4, 12), 	// left arm
 		new Panel( 0, 24, -2,  1,  8,  8, 16,  8,  8,  8), 	// left side of head [Note: Switching to right view]
-		new Panel( 8,  0,  0,  1, 12,  4,  0, 20,  4, 12), 	// right leg
-		new Panel(12, 12,  0,  1, 12,  4, 28, 20,  4, 12), 	// right arm
+		new Panel( 7,  0,  0,  1, 12,  4,  0, 20,  4, 12), 	// right leg
+		new Panel(11, 12,  0,  1, 12,  4, 28, 20,  4, 12), 	// right arm
 		new Panel( 7, 24, -2,  1,  8,  8,  0,  8,  8,  8),	// right side of head [Note: Switching to front view]
-		new Panel( 0, 24,  6,  8,  8,  1,  8,  8,  8,  8), 	// face
+		new Panel( 0, 24,  5,  8,  8,  1,  8,  8,  8,  8), 	// face
 		new Panel(-4, 12,  3,  4, 12,  1, 44, 20,  4, 12), 	// left arm front
 		new Panel( 8, 12,  3,  4, 12,  1, 44, 20,  4, 12), 	// right arm front
 		new Panel( 0, 12,  3,  8, 12,  1, 20, 20,  8, 12), 	// front of chest
@@ -325,11 +325,30 @@ public final class MediaWallPlugin extends JavaPlugin implements Listener {
          			Location here = startLocation.clone();
          			here.add(panel.getStevePos());
          			here.add(x, y, z);
-         			here.getBlock().setType(Material.BOOKSHELF);
+         			int xx = panel.getSkinRect().x;
+         		    int yy = panel.getSkinRect().y;
+         			if(panel.getSteveArea().getY() != 1){
+         				yy += panel.getSkinRect().height - 1;
+         			}
+         			if (panel.getSteveArea().getX() == 1) {
+         				xx += z;
+         				yy -= y;
+         			} else if (panel.getSteveArea().getY() == 1) {
+         				xx += x;
+         				yy += z;
+         			} else {
+         			    xx += x;
+         			    yy -= y;
+         			}
+         			getLogger().info("x is " + x + " y is " + y + " z is " + z + " xx is " + xx + "yy is " + yy);
+         			byte woolType = getWoolType(skinImage, xx, yy);
+         			here.getBlock().setType(Material.WOOL);
+         			here.getBlock().setData(woolType);
          		}
          	}
          }
     }
+
 	@EventHandler
 	public void onSignChange(SignChangeEvent event) {
 	    maybeBuildImage(event.getBlock().getLocation(), event.getLine(0));
